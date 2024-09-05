@@ -8,7 +8,7 @@ def main():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
-        server.bind(('localhost', 777))
+        server.bind(('172.16.103.221', 777))
         server.listen(15)
     except:
         return print("Não foi possível iniciar o servidor")
