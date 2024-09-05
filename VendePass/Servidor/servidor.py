@@ -1,1 +1,8 @@
-print('servidor')
+import socket
+import threading
+
+
+
+
+
+
