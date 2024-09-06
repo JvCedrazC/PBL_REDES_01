@@ -2,7 +2,7 @@ import socket
 import threading
 import networkx as nx
 clients = []
-origem = ''
+origem = '' 
 destino = ''
 
 def criar_grafo(arquivo):
