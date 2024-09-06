@@ -16,7 +16,8 @@ def encontrar_caminhos(grafo, origem, destino):
     return list(nx.all_simple_paths(grafo, source=origem, target=destino))
 
 def descobrir_cidade(cidade):
-    match cidade:
+    pass
+    '''match cidade:
         case 1:
             return "A"
         case 2:
@@ -37,6 +38,7 @@ def descobrir_cidade(cidade):
             return "I"
         case 10:
             return "J"
+'''
                 
 
 def main():
