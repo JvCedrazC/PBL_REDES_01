@@ -5,7 +5,7 @@ import PBL_REDES_01.VendePass.Cliente
 def main():
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        client.connect(('localhost', 777))
+        client.connect(('172.16.103.221', 777))
     except:
         return print("\n Não foi possível conectar ao servidor")
 
