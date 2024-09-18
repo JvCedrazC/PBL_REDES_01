@@ -1,6 +1,6 @@
 import socket
 import threading
-import PBL_REDES_01.VendePass.Cliente
+import pickle
 
 def get_ipv4():
     # Tenta criar uma conexão para obter o IP da máquina local
@@ -18,9 +18,11 @@ def get_ipv4():
 def main():
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ipv4 = str(get_ipv4())
+   # ipv4 = '192.168.7.54'
 
     try:
-        client.connect((ipv4, 777))
+        client.connect((ipv4, 8080))
+        print('Entrou')
     except:
         return print("\n Não foi possível conectar ao servidor")
 
@@ -41,7 +43,9 @@ def main():
 def receive_Messages(client):
     while True:
         try:
-            msg = client.recv(2048)#.decode('utf-8')
+            msg = client.recv(4096)
+            if msg:
+                msg = pickle.loads(msg)
             for i in msg:
                 print(i + '\n')
         except:
@@ -50,13 +54,18 @@ def receive_Messages(client):
             client.close()
             break
 
+
 #enviar mensagens
 def sendMessages(client, user, origem, destino):
     while True:
         try:
-            client.send(user.encode('utf-8'), origem.encode('utf-8'), destino.encode('utf-8'))
+            #lista = [client, user, origem, destino]
+            #args = pickle.dumps(lista)
+            #client.send(args)
+            client.send(f'[{user},{origem},{destino}]'.encode('utf-8'))
+            #print(f"Mensagem enviada: [{user},{origem},{destino}]")
         except:
             return
 
 
-
+main()
