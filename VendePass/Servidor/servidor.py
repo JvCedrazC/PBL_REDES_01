@@ -4,7 +4,7 @@ import networkx as nx
 import pickle
 
 clients = []
-origem = ''
+origem = '' 
 destino = ''
 
 def criar_grafo(arquivo):
