@@ -56,6 +56,7 @@ def main():
         print('cliente conectado!')
         thread = threading.Thread(target=messagesTreatment, args=[client])
         thread.start()
+        print('Thread iniciada')
         res = input('>')
         if res == 's':
             print(clients)
@@ -69,14 +70,18 @@ def main():
 
 #funções de envio de mensagem
 def messagesTreatment(client):
+    print('Chamou a função')
     while True:
+        print('Entrou no while')
         try:
-            msg = eval(client.recv(4096))
+            print('Entrou no Try')
+            msg = client.recv(4096).decode()
+            print(msg)
             lista = pickle.loads(msg)
             print('Mensagem recebida')
-            origem = msg[2]
+            origem = lista[2]
             print(f'Origem: {origem}')
-            destino = msg[3]
+            destino = lista[3]
             print(f'Destino: {destino}')
             caminhos = encontrar_caminhos(grafo, origem, destino)
             for i in caminhos:
@@ -85,6 +90,7 @@ def messagesTreatment(client):
             broadcast(send_paths, client)
 
         except:
+            print('Deletando cliente')
             deleteClient(client)
             break
 
