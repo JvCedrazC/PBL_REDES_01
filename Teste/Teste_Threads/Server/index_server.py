@@ -35,12 +35,12 @@ def messagesTreatment(client):
     while True:
         try:
             msg = client.recv(2048)
-            broadcast(msg, client)
+            sendClients(msg, client)
         except:
             deleteClient(client)
             break
 
-def broadcast(msg, client):
+def sendClients(msg, client):
     for clientItem in clients:
         if clientItem != client:
             try:
