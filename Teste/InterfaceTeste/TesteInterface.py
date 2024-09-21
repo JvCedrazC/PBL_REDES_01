@@ -115,6 +115,7 @@ def main():
         #Validar entrada de destino
         validar = validarEntradas(destino)
         destino = cidades(destino)
+        print("Certo!")
 
 
         
