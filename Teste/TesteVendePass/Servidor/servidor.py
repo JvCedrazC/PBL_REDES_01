@@ -3,7 +3,7 @@ import threading
 import networkx as nx
 import pickle
 
-file = 'cidades.txt'
+file = r"C:\Users\kmbma\OneDrive\Documentos\GitHub\PBL_REDES_01\Teste\TesteVendePass\Servidor\cidades.txt"
 clients = []
 
 
@@ -25,12 +25,23 @@ Graph0 = create_graph(file)
 
 def send_path_to_client(client, msg):
     msg_loaded = pickle.loads(msg)
-    source, target = msg_loaded[0], msg_loaded[1]
-    print(source)
-    print(target)
-    path = find_path(source, target, Graph0)
-    msg = pickle.dumps(path)
-    client.sendall(msg)
+    target, source, user = msg_loaded[0], msg_loaded[1], msg_loaded[2]
+    print(f"Source: {source}, Target: {target}")
+
+    # Verificar se os nós existem no grafo
+    if source not in Graph0 or target not in Graph0:
+        error_msg = f"Nó(s) não encontrado(s): {source} ou {target}."
+        print(error_msg)
+        client.sendall(pickle.dumps(error_msg))
+        return
+
+    try:
+        path = find_path(source, target, Graph0)
+        msg = pickle.dumps(path)
+        client.sendall(msg)
+    except Exception as e:
+        print(f"Erro ao encontrar caminho: {e}")
+        client.sendall(pickle.dumps(f"Erro ao processar caminho: {e}"))
 
 
 def comunication(socket_client):
@@ -47,7 +58,7 @@ def main():
 
     #starting the socket
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind(('192.168.246.54', 25565))
+    server_socket.bind(('192.168.15.153', 5050))
     server_socket.listen(15)
 
     while True:

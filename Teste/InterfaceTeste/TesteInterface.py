@@ -2,9 +2,36 @@ import networkx as nx
 import socket
 import threading
 
-def validarEntradas():
-    pass
+def cidades(numero):
+     match numero:
+        case 1:
+            return "São_Paulo"
+        case 2:
+            return "Rio_de_Janeiro"
+        case 3:
+            return "Brasilia"
+        case 4:
+            return "Salvador"
+        case 5:
+            return "Recife"
+        case 6:
+            return "Porto_Alegre"
+        case 7:
+            return "Curitiba"
+        case 8:
+            return "Fortaleza"
+        case 9:
+            return "Manaus"
+        case 10:
+            return "Belo_Horizonte"
+        
 
+
+def validarEntradas(numero):
+    while numero < 1 or numero > 11:
+        numero = int(input("Escolha um local válido:\n 1 = São Paulo (SP)\n 2 = Rio de Janeiro (RS)\n 3 = Brasília (DF) \n 4 = Salvador (BA)\n 5 = Recife (PE)\n 6 = Porto Alegre (RS)F\n 7 = Curitiba (PR)\n 8 = Fortaleza (CE)\n 9 = Manaus (AM)\n 10 = Belo Horizonte (BH)\n 11 = Para sair"))
+    return
+    
 def get_ipv4():
     # Tenta criar uma conexão para obter o IP da máquina local
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -48,7 +75,7 @@ def main():
     ipv4 = str(get_ipv4())
 
     try:
-        client.connect('192.168.246.176', 25565)
+        client.connect('192.168.246.176', 5050)
         print("Tentou entrar aqui!")
 
     except:
@@ -74,7 +101,9 @@ def main():
         if origem == 11:
             break
 
-        #Validar entradas/////////////////////////////////////////////////
+        #Validar entrada de origem        
+        validar = validarEntradas(origem)
+        origem = cidades(origem)
         
         print("\n")
         print(100*"=")
@@ -83,7 +112,9 @@ def main():
         if destino == 11:
             break
         
-        #Validar entradas/////////////////////////////////////////////////
+        #Validar entrada de destino
+        validar = validarEntradas(destino)
+        destino = cidades(destino)
 
 
         
