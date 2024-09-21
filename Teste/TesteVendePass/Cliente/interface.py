@@ -21,29 +21,31 @@ def main():
    # ipv4 = '192.168.7.54'
 
     try:
-        client.connect((ipv4, 8080))
+        client.connect(('192.168.246.54', 25565))
         print('Entrou')
     except:
         return print("\n Não foi possível conectar ao servidor")
 
     print("Conectado!\n")
 
-    user = input("Nome do usuário>")
-    origem = 'B'
-    destino = 'E'
+    while True:
+        user = input("Nome do usuário>")
+        origem = 'B'
+        destino = 'E'
 
-    thread1 = threading.Thread(target=receive_Messages, args=[client])
-    thread2 = threading.Thread(target=sendMessages, args=[client, user, origem, destino])
 
-    thread1.start()
-    thread2.start()
+        thread1 = threading.Thread(target=receive_Messages, args=[client])
+        thread2 = threading.Thread(target=sendMessages, args=[client, origem, destino, user])
+
+        thread1.start()
+        thread2.start()
 
 
 #receber mensagens
 def receive_Messages(client):
     while True:
         try:
-            msg = client.recv(4096)
+            msg = client.recv(1024)
             if msg:
                 msg = pickle.loads(msg)
             for i in msg:
@@ -59,13 +61,14 @@ def receive_Messages(client):
 def sendMessages(client, user, origem, destino):
     while True:
         try:
-            lista = [client, user, origem, destino]
+            lista = []
+            lista.append(origem)
+            lista.append(destino)
+            lista.append(user)
             args = pickle.dumps(lista)
             client.sendall(args)
-            #client.send(f'[{user},{origem},{destino}]'.encode('utf-8'))
-            #print(f"Mensagem enviada: [{user},{origem},{destino}]")
-        except:
-            return
+        except Exception as e:
+            return print(e)
 
 
 main()
