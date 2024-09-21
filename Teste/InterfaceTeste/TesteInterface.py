@@ -1,106 +1,97 @@
 import networkx as nx
+import socket
+import threading
 
-
-# Função para ler o arquivo e criar o grafo
-def criar_grafo(arquivo):
-    grafo = nx.Graph()
-    with open(arquivo, 'r') as f:
-        for linha in f:
-            cidade1, cidade2 = linha.strip().split()
-            grafo.add_edge(cidade1, cidade2)
-    return grafo
-
-
-# Função para encontrar todos os caminhos entre duas cidades
-def encontrar_caminhos(grafo, origem, destino):
-    return list(nx.all_simple_paths(grafo, source=origem, target=destino))
-
-def descobrir_cidade(cidade):
+def validarEntradas():
     pass
-    '''match cidade:
-        case 1:
-            return "A"
-        case 2:
-            return "B"
-        case 3:
-            return "C"
-        case 4:
-            return "D"
-        case 5:
-            return "E"
-        case 6:
-            return "F"
-        case 7:
-            return "G"
-        case 8:
-            return "H"
-        case 9:
-            return "I"
-        case 10:
-            return "J"
-'''
-                
+
+def get_ipv4():
+    # Tenta criar uma conexão para obter o IP da máquina local
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # Conecta a um IP externo para obter o IP local (não será enviado nenhum dado)
+        s.connect(("8.8.8.8", 80))  # Usa o DNS do Google como referência
+        ipv4 = s.getsockname()[0]
+    except Exception as e:
+        ipv4 = "Não foi possível obter o IPv4"
+    finally:
+        s.close()
+    return ipv4
+
+#receber mensagens
+def receive_Messages(client):
+    while True:
+        try:
+            msg = client.recv(1024)#.decode('utf-8')
+            for i in msg:
+                print(i + '\n')
+        except:
+            print('\nNão foi possível permancer conectado ao servidor!')
+            print('\nPressione <enter> para continuar')
+            client.close()
+            break
+
+#enviar mensagens
+def sendMessages(client, user, origem, destino):
+    while True:
+        try:
+            client.send(user.encode('utf-8'), origem.encode('utf-8'), destino.encode('utf-8'))
+        except:
+            return
+
 
 def main():
     sair = 0
 
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print("Cliente socket entrou")
+    ipv4 = str(get_ipv4())
+
+    try:
+        client.connect('192.168.246.54', 25565)
+        print("Tentou entrar aqui!")
+
+    except:
+        return print("\n Não foi possível conectar ao servidor")
+
+    print("Conectado!\n")
+
+
     while sair == 0:
+        print("\n")
+        print(100*"=")
         print("-------- Bem vindo a foda-se --------")
         print("\n")
         
-        print("Escolha o número que represente o seu local de origem (local de onde você quer viajar)\n 1 = A\n 2 = B\n 3 = C \n 4 = D\n 5 = E\n 6 = F\n 7 = G\n 8 = H\n 9 = I\n 10 = J\n 11 = Para sair")
+        nome = input("Digite o seu nome: ")
+        print(100*"=")
+
+
+        print("Escolha o número que represente o seu local de origem (local de onde você quer viajar):\n 1 = São Paulo (SP)\n 2 = Rio de Janeiro (RS)\n 3 = Brasília (DF) \n 4 = Salvador (BA)\n 5 = Recife (PE)\n 6 = Porto Alegre (RS)F\n 7 = Curitiba (PR)\n 8 = Fortaleza (CE)\n 9 = Manaus (AM)\n 10 = Belo Horizonte (BH)\n 11 = Para sair")
         origem = int(input("Origem: "))
         
         #Tratamento de erro / Desistência do usuario
         if origem == 11:
             break
 
-        #Deixa o usuario preso em um while caso escolha um valor invalido
-        while origem < 1 or origem > 11:
-            print("Escolha um número válido")
-            origem = int(input("Origem: "))
-
+        #Validar entradas/////////////////////////////////////////////////
         
         print("\n")
         print(100*"=")
-        print("\nAgora escolha o número que represente o seu local de destino (local para onde você quer viajar):\n 1 = A\n 2 = B\n 3 = C \n 4 = D\n 5 = E\n 6 = F\n 7 = G\n 8 = H\n 9 = I\n 10 = J\n 11 = Para sair ")
-        destino = int(input("Destino: "))
-
-        #Tratamento de erro / Desistência do usuario
+        print("\nAgora escolha o número que represente o seu local de destino (local para onde você quer viajar):\n 1 = São Paulo (SP)\n 2 = Rio de Janeiro (RS)\n 3 = Brasília (DF) \n 4 = Salvador (BA)\n 5 = Recife (PE)\n 6 =Porto Alegre (RS)F\n 7 = Curitiba (PR)\n 8 = Fortaleza (CE)\n 9 = Manaus (AM)\n 10 = Belo Horizonte (BH)\n 11 = Para sair")
+        destino = input("Destino: ")
         if destino == 11:
             break
-        elif destino == origem:
-            print("Escolha um número válido")
-            origem = int(input("Origem: "))
-            print("\n")
-            print("O seu destino não pode ser igual a sua origem")
-
-
-        #Deixa o usuario preso em um while caso escolha um valor invalido
-        while destino < 1 or destino > 11:
-            print("Escolha um número válido")
-            origem = int(input("Origem: "))
-            print("\n")
         
+        #Validar entradas/////////////////////////////////////////////////
 
-        #Descobre quais são as cidades equivalentes aos números escolhidos
-        origem = descobrir_cidade(origem)
-        destino = descobrir_cidade(destino)
+
         
-        
-        #Cria o grafo, encontra as rotas e retorna para o usuario
-        grafo = criar_grafo('Cidades.txt')
-        caminhos = encontrar_caminhos(grafo, origem, destino)
-        
-        print(100*("="))
-        print("Rotas disponíveis: ")
-        for caminho in caminhos:
-            print(" -> ".join(caminho))
-        print(100*("="))
+        thread1 = threading.Thread(target=receive_Messages, args=[client])
+        thread2 = threading.Thread(target=sendMessages, args=[client, nome, origem, destino])
 
-
-
-
+        thread1.start()
+        thread2.start()
 
 
 
