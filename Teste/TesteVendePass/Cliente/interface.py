@@ -59,10 +59,10 @@ def receive_Messages(client):
 def sendMessages(client, user, origem, destino):
     while True:
         try:
-            #lista = [client, user, origem, destino]
-            #args = pickle.dumps(lista)
-            #client.send(args)
-            client.send(f'[{user},{origem},{destino}]'.encode('utf-8'))
+            lista = [client, user, origem, destino]
+            args = pickle.dumps(lista)
+            client.sendall(args)
+            #client.send(f'[{user},{origem},{destino}]'.encode('utf-8'))
             #print(f"Mensagem enviada: [{user},{origem},{destino}]")
         except:
             return
