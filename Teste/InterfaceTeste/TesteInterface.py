@@ -48,7 +48,7 @@ def main():
     ipv4 = str(get_ipv4())
 
     try:
-        client.connect('192.168.246.54', 25565)
+        client.connect('192.168.246.176', 25565)
         print("Tentou entrar aqui!")
 
     except:
