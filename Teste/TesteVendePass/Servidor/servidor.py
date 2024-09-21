@@ -58,6 +58,7 @@ def main():
         thread = threading.Thread(target=comunication, args=[socket_client])
         thread.start()
         print('Aguardando conexão!')
+        print('')
 
 
 main()
