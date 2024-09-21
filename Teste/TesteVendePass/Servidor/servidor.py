@@ -3,102 +3,62 @@ import threading
 import networkx as nx
 import pickle
 
+file = 'cidades.txt'
 clients = []
-origem = ''
-destino = ''
 
-def criar_grafo(arquivo):
-    grafo = nx.Graph()
+
+def create_graph(arquivo):
+    graph = nx.Graph()
     with open(arquivo, 'r') as f:
         for linha in f:
             cidade1, cidade2 = linha.strip().split()
-            grafo.add_edge(cidade1, cidade2)
-    return grafo
+            graph.add_edge(cidade1, cidade2)
+    return graph
 
-grafo = criar_grafo('cidades.txt')
 
-# Função para encontrar todos os caminhos entre duas cidades
-def encontrar_caminhos(grafo, origem, destino):
-    return list(nx.all_simple_paths(grafo, source=origem, target=destino))
+def find_path(source, target, graph):
+    return list(nx.all_simple_paths(graph, source=source, target=target))
 
-def get_ipv4():
-    # Tenta criar uma conexão para obter o IP da máquina local
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        # Conecta a um IP externo para obter o IP local (não será enviado nenhum dado)
-        s.connect(("8.8.8.8", 80))  # Usa o DNS do Google como referência
-        ipv4 = s.getsockname()[0]
-    except Exception as e:
-        ipv4 = "Não foi possível obter o IPv4"
-    finally:
-        s.close()
-    return ipv4
+
+Graph0 = create_graph(file)
+
+
+def send_path_to_client(client, msg):
+    msg_loaded = pickle.loads(msg)
+    source, target = msg_loaded[0], msg_loaded[1]
+    print(source)
+    print(target)
+    path = find_path(source, target, Graph0)
+    msg = pickle.dumps(path)
+    client.sendall(msg)
+
+
+def comunication(socket_client):
+    while True:
+        msg = socket_client.recv(1024)
+        send_path_to_client(socket_client, msg)
+
+
+def delete_client(client):
+    clients.remove(client)
+
 
 def main():
-    #abrindo socket
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    ipv4 = str(get_ipv4())
-   # ipv4 = '192.168.7.54'
 
-    #iniciando o servidor
-    try:
-        server.bind((ipv4, 8080))
-        server.listen(15)
+    #starting the socket
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(('192.168.246.54', 25565))
+    server_socket.listen(15)
 
-    except:
-        return print("Servidor não iniciado!")
-    print('Servidor abriu')
-    print(f'IP: {ipv4}')
-    #servidor funcionando
     while True:
-        client, addr = server.accept()
-        clients.append(client)
-        print('cliente conectado!')
-        thread = threading.Thread(target=messagesTreatment, args=[client])
+        socket_client, addr = server_socket.accept()
+        clients.append(socket_client)
+        print(f'Cliente {socket_client.getsockname()[0]} conectado')
+
+        thread = threading.Thread(target=comunication, args=[socket_client])
         thread.start()
-        res = input('>')
-        if res == 's':
-            print(clients)
-            '''if len(clients) != 0:
-                for i in clients:
-                    print(f'{i}\n')
-            else:
-                print("Não há clientes conectados!")'''
-
-
-
-#funções de envio de mensagem
-def messagesTreatment(client):
-    while True:
-        try:
-            msg = eval(client.recv(4096))
-            lista = pickle.loads(msg)
-            print('Mensagem recebida')
-            origem = msg[2]
-            print(f'Origem: {origem}')
-            destino = msg[3]
-            print(f'Destino: {destino}')
-            caminhos = encontrar_caminhos(grafo, origem, destino)
-            for i in caminhos:
-                print(f'Caminho: {i}')
-            send_paths = pickle.dumps(caminhos)
-            broadcast(send_paths, client)
-
-        except:
-            deleteClient(client)
-            break
-
-
-def broadcast(msg, client):
-    for clientItem in clients:
-        if clientItem == client:
-            try:
-                clientItem.send(msg)
-            except:
-                print('Cliente não conectado!')
-    print('Mensagem enviada')
-def deleteClient(client):
-    clients.remove(client)
+        print('Aguardando conexão!')
+        print('')
 
 
 main()

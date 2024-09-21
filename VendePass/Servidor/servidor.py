@@ -45,7 +45,8 @@ def main():
         server.bind((ipv4, 8080))
         server.listen(15)
 
-    except:
+    except Exception as e:
+        print(e)
         return print("Servidor não iniciado!")
     print('Servidor abriu')
     print(f'IP: {ipv4}')
@@ -57,14 +58,6 @@ def main():
         thread = threading.Thread(target=messagesTreatment, args=[client])
         thread.start()
         print('Thread iniciada')
-        res = input('>')
-        if res == 's':
-            print(clients)
-            '''if len(clients) != 0:
-                for i in clients:
-                    print(f'{i}\n')
-            else:
-                print("Não há clientes conectados!")'''
 
 
 
@@ -75,7 +68,7 @@ def messagesTreatment(client):
         print('Entrou no while')
         try:
             print('Entrou no Try')
-            msg = client.recv(4096).decode()
+            msg = client.recv(4096)
             print(msg)
             lista = pickle.loads(msg)
             print('Mensagem recebida')
