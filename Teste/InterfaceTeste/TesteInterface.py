@@ -25,6 +25,7 @@ def cidades(numero):
         case 10:
             return "Belo_Horizonte"
         
+        
 
 
 def validarEntradas(numero):
@@ -115,7 +116,7 @@ def main():
         #Validar entrada de destino
         validar = validarEntradas(destino)
         destino = cidades(destino)
-        print("Certo!")
+        print("Enviando")
 
 
         
