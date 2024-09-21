@@ -21,15 +21,15 @@ def main():
    # ipv4 = '192.168.7.54'
 
     try:
-        client.connect(('192.168.246.54', 25565))
+        client.connect(('localhost', 25565))
         print('Entrou')
     except:
         return print("\n Não foi possível conectar ao servidor")
 
     print("Conectado!\n")
-
+    user = input("Nome do usuário>")
     while True:
-        user = input("Nome do usuário>")
+
         origem = 'B'
         destino = 'E'
 
