@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  Servidor:
+    build:
+      context: ./Servidor
+    ports:
+      - "777:777"
+    restart: always
+
+  Cliente:
+    build:
+      context: ./Cliente
+    depends_on:
+      - Servidor
+    restart: on-failure
