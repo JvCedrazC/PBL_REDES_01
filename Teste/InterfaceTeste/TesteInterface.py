@@ -1,37 +1,41 @@
+import pickle
 import networkx as nx
 import socket
 import threading
 
 def cidades(numero):
-     match numero:
-        case 1:
-            return "São_Paulo"
-        case 2:
-            return "Rio_de_Janeiro"
-        case 3:
-            return "Brasilia"
-        case 4:
-            return "Salvador"
-        case 5:
-            return "Recife"
-        case 6:
-            return "Porto_Alegre"
-        case 7:
-            return "Curitiba"
-        case 8:
-            return "Fortaleza"
-        case 9:
-            return "Manaus"
-        case 10:
-            return "Belo_Horizonte"
+    if numero == 1:
+        return "Sao_Paulo"
+    elif numero == 2:
+        return "Rio_de_Janeiro"
+    elif numero == 3:
+        return "Brasilia"
+    elif numero == 4:
+        return "Salvador"
+    elif numero == 5:
+        return "Recife"
+    elif numero == 6:
+        return "Porto_Alegre"
+    elif numero == 7:
+        return "Curitiba"
+    elif numero == 8:
+        return "Fortaleza"
+    elif numero == 9:
+        return "Manaus"
+    elif numero == 10:
+        return "Belo_Horizonte"
         
         
 
 
 def validarEntradas(numero):
-    while numero < 1 or numero > 11:
-        numero = int(input("Escolha um local válido:\n 1 = São Paulo (SP)\n 2 = Rio de Janeiro (RS)\n 3 = Brasília (DF) \n 4 = Salvador (BA)\n 5 = Recife (PE)\n 6 = Porto Alegre (RS)F\n 7 = Curitiba (PR)\n 8 = Fortaleza (CE)\n 9 = Manaus (AM)\n 10 = Belo Horizonte (BH)\n 11 = Para sair"))
-    return
+    if numero < 1 or numero > 10:
+        while True:
+            numero = int(input("Escolha um local válido:\n 1 = São Paulo (SP)\n 2 = Rio de Janeiro (RS)\n 3 = Brasília (DF) \n 4 = Salvador (BA)\n 5 = Recife (PE)\n 6 = Porto Alegre (RS)F\n 7 = Curitiba (PR)\n 8 = Fortaleza (CE)\n 9 = Manaus (AM)\n 10 = Belo Horizonte (BH)\n 11 = Para sair"))
+            if numero >= 1 or numero <= 11:
+                return
+    else:
+        return
     
 def get_ipv4():
     # Tenta criar uma conexão para obter o IP da máquina local
@@ -50,7 +54,7 @@ def get_ipv4():
 def receive_Messages(client):
     while True:
         try:
-            msg = client.recv(1024)#.decode('utf-8')
+            msg = client.recv(8192)#.decode('utf-8')
             for i in msg:
                 print(i + '\n')
         except:
@@ -63,8 +67,11 @@ def receive_Messages(client):
 def sendMessages(client, user, origem, destino):
     while True:
         try:
-            client.send(user.encode('utf-8'), origem.encode('utf-8'), destino.encode('utf-8'))
-        except:
+            #client.send(user.encode('utf-8'), origem.encode('utf-8'), destino.encode('utf-8'))
+            data = pickle.dumps([user, origem, destino])
+            client.send(data)
+        except Exception as e:
+            print((f"Erro ao enviar: {e}"))
             return
 
 
@@ -76,7 +83,7 @@ def main():
     ipv4 = str(get_ipv4())
 
     try:
-        client.connect('192.168.246.176', 5050)
+        client.connect(('192.168.15.153', 5050))
         print("Tentou entrar aqui!")
 
     except:
@@ -109,7 +116,7 @@ def main():
         print("\n")
         print(100*"=")
         print("\nAgora escolha o número que represente o seu local de destino (local para onde você quer viajar):\n 1 = São Paulo (SP)\n 2 = Rio de Janeiro (RS)\n 3 = Brasília (DF) \n 4 = Salvador (BA)\n 5 = Recife (PE)\n 6 =Porto Alegre (RS)F\n 7 = Curitiba (PR)\n 8 = Fortaleza (CE)\n 9 = Manaus (AM)\n 10 = Belo Horizonte (BH)\n 11 = Para sair")
-        destino = input("Destino: ")
+        destino = int(input("Destino: "))
         if destino == 11:
             break
         
@@ -129,24 +136,3 @@ def main():
 
 
 main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
