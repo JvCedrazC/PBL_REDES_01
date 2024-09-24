@@ -13,6 +13,7 @@ def create_graph(arquivo):
         for linha in f:
             cidade1, cidade2 = linha.strip().split()
             graph.add_edge(cidade1, cidade2)
+        
     return graph
 
 
@@ -24,21 +25,26 @@ Graph0 = create_graph(file)
 
 
 def send_path_to_client(client, msg):
-    msg_loaded = pickle.loads(msg)
-    target, source, user = msg_loaded[0], msg_loaded[1], msg_loaded[2]
-    print(f"Source: {source}, Target: {target}")
-
-    # Verificar se os nós existem no grafo
-    if source not in Graph0 or target not in Graph0:
-        error_msg = f"Nó(s) não encontrado(s): {source} ou {target}."
-        print(error_msg)
-        client.sendall(pickle.dumps(error_msg))
-        return
-
     try:
+        msg_loaded = pickle.loads(msg)
+        target, source, user = msg_loaded[2], msg_loaded[1], msg_loaded[0]
+        print(f"Source: {source}, Target: {target}")
+
+        # Verificar se os nós existem no grafo
+        if source not in Graph0 or target not in Graph0:
+            error_msg = f"Nó(s) não encontrado(s): {source} ou {target}."
+            print(error_msg)
+            client.sendall(pickle.dumps(error_msg))
+            return
+    
         path = find_path(source, target, Graph0)
+    
+        
         msg = pickle.dumps(path)
         client.sendall(msg)
+    except pickle.UnpicklingError as e:
+        print(f"Erro ao desempacotar a mensagem: {e}")
+        client.sendall(pickle.dumps(f"Erro ao desempacotar a mensagem: {e}"))    
     except Exception as e:
         print(f"Erro ao encontrar caminho: {e}")
         client.sendall(pickle.dumps(f"Erro ao processar caminho: {e}"))
@@ -46,7 +52,7 @@ def send_path_to_client(client, msg):
 
 def comunication(socket_client):
     while True:
-        msg = socket_client.recv(1024)
+        msg = socket_client.recv(8192)
         send_path_to_client(socket_client, msg)
 
 
