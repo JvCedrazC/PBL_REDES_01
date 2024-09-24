@@ -54,7 +54,7 @@ def get_ipv4():
 def receive_Messages(client):
     while True:
         try:
-            msg = client.recv(4096)#.decode('utf-8')
+            msg = client.recv(8192)#.decode('utf-8')
             for i in msg:
                 print(i + '\n')
         except:
