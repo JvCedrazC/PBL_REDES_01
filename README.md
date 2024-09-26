@@ -251,8 +251,8 @@ O sistema consiste em duas partes principais:
    * O servidor utiliza a biblioteca networkx para criar e gerenciar um grafo não direcionado representando as cidades e as conexões entre elas. Este grafo é carregado a partir de um arquivo de texto (cidades.txt), onde cada linha representa uma conexão entre duas cidades.
    * A função find_path calcula todas as rotas possíveis entre duas cidades usando o grafo, com um limite de até quatro conexões. Isso evita que o cliente precise fazer muitas trocas de voos, garantindo que as rotas oferecidas sejam viáveis.
 
-### Arquitetura do servidor
-A arquitetura que melhor descreve o servidor é a arquitetura statefull, e, apesar de não haver persistência de dados, o contexto de cada transação fica salvo e cada thread executada pode ser retomada para o estado anterior em caso de erros. O servidor também permite armazenar o estado das rotas que é compartilhado com diferentes clientes. Este estado fica salvo na variável global route_tickets e a informação do estado das rotas persiste durante a execução do servidor.
+### Paradigma de comunicação
+O paradigma que melhor descreve o servidor é o *statefull*, e, apesar de não haver persistência de dados, o contexto de cada transação fica salvo e cada thread executada pode ser retomada para o estado anterior em caso de erros. O servidor também permite armazenar o estado das rotas que é compartilhado com diferentes clientes. Este estado fica salvo na variável global *route_tickets* e a informação do estado das rotas persiste durante a execução do servidor.
 
 ### Concorrência e Sincronização
 Para suportar múltiplos clientes simultaneamente, o servidor utiliza threads. Cada cliente conectado é atendido em uma thread separada, permitindo que vários clientes façam consultas e reservas ao mesmo tempo.
