@@ -46,6 +46,7 @@ def print_rotas(rotas, mensagem):
     print("\n")
 
 
+#Função de comunicação
 def communication(socket_client):
     global rotes_tickets
     try:

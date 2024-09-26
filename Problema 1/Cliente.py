@@ -33,6 +33,7 @@ def buy_rotes(buy, msg):
 
 
 def main():
+
     socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     socket_client.connect(('localhost', 777))
     print('Conectado')
